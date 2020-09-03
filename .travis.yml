@@ -1,7 +1,23 @@
-    language: minimal
-    deploy:
-      provider: script
-      script: curl https://raw.githubusercontent.com/liesauer/github-release-cli/master/scripts/github-auto-release.sh -L --output github-auto-release.sh && chmod +x github-auto-release.sh && bash ./github-auto-release.sh
-      on:
-        all_branches: true
-        tags: true
+language: node_js
+node_js:
+  - "stable"
+script:
+  - npm install codecov -g
+  - npm run build
+  - npm run test
+after_success:
+  - codecov
+
+# 可以进行其他操作,包括改名或压缩
+before_deploy:
+  cp $TRAVIS_BUILD_DIR/dist/index.js index.js
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  file: "$TRAVIS_BUILD_DIR/dist/index.js"
+  api_key:
+    secure: "$API_KEY"
+  on:
+    tags: true #发布  tag版 时才进行发包   
+    draft: false # 不发表drafs
