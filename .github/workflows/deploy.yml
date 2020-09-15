@@ -1,9 +1,38 @@
 #触发的事件
 on:
-  #push:
-    #branches:
-      #- master
+  push:
+    tags: #git push tag v0.1.0触发
+      - ‘v*'
 # 定时任务在utc的9点执行，换算北京时间需要 + 8也就是凌晨五点
-  schedule:
-    - cron: "0 21 * * *"
+  #schedule:
+    #- cron: "0 21 * * *"
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest #运行环境
+    steps: #步骤
+    #第一步： 下载源码 （CI/CD拉去代码到自己的本地）
+    - name: Checkout
+      uses: actions/checkout@master
+    #第二步：发布 Release
+    - name: Create Release # 创建Release，可以在仓库看到一个个版本
+      id: create_release
+      uses: actions/create-release@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }} # 之前GitHub添加的Token
+      with:
+        tag_name: ${{ github.ref }} # (tag)标签名称
+        release_name: Release ${{ github.ref }}
+        draft: false # 是否是草稿
+        prerelease: false # 是否是预发布
 
+    # 第三步：上传构建结果到 Release（把打包的tgz上传到Release）
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # 上传地址，通过创建Release获取到的
+        asset_path: ./output/release.tgz # 要上传文件
+        asset_name: release.tgz # 上传后的文件名
+        asset_content_type: application/x-tgz
