@@ -1,8 +1,9 @@
 #触发的事件
 on:
   push:
-    tags: #git push tag v0.1.0触发
-      - ‘v*'
+    branches: [ master ]
+    tags: # 当我们提交代码为tag 是以'v'开头的时候才会触发自动部署到服务端 如 git push tag v0.1.0
+      - 'v*'
 # 定时任务在utc的9点执行，换算北京时间需要 + 8也就是凌晨五点
   #schedule:
     #- cron: "0 21 * * *"
