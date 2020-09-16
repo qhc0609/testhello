@@ -5,8 +5,11 @@ name: CI
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
+  #push:
+    #branches: [ master ]
   push:
-    branches: [ master ]
+    tags: # 当我们提交代码为tag 是以'v'开头的时候才会触发自动部署到服务端 如 git push tag v0.1.0
+      - 'v*'
   pull_request:
     branches: [ master ]
 
