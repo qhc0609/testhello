@@ -7,11 +7,11 @@ name: test_release
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
-  push:
     tags: # 当我们提交代码为tag 是以'v'开头的时候才会触发自动部署到服务端 如 git push tag v0.1.0
       - 'v*'
+  pull_request:
+    branches: [ master ]
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
